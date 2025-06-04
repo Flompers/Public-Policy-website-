@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # main.py
 import time  # New import for sleep
 import json
@@ -6,7 +5,7 @@ import random
 import os
 from datetime import datetime, timedelta
 import difflib
-from fpdf import FPDF  # for PDF export; ensure 'fpdf' is installed
+
 
 import streamlit as st
 import pandas as pd
@@ -30,7 +29,7 @@ st.set_page_config(
 TERMS_PATH = "terms.json"
 PROGRESS_PATH = "progress.json"
 AUDIO_DIR = "audio_tts"
-PDF_PATH = "flashcards_unknown.pdf"  # temporary PDF path
+
 
 if TTS_AVAILABLE:
     os.makedirs(AUDIO_DIR, exist_ok=True)
@@ -243,55 +242,12 @@ else:
 st.title("📚 Public Policy Flashcards & Smart Scheduler")
 st.markdown(
     "Use the sidebar to filter by tags and weeks, track known terms, and see which are due for review.  \n"
-    "You can also start a Pomodoro, reset progress, or export a PDF of unknown flashcards.  \n"
+    "You can also start a Pomodoro, reset progress.  \n"
     "Choose a mode below: Flashcard Lookup or Quick Quiz."
 )
 st.markdown("---")
 import unicodedata
 
-# …earlier parts of main.py remain unchanged…
-
-# === PDF Export of Unknown Flashcards ===
-# (Prints a sanitized list: term at top, blank lines for definition)
-st.subheader("📄 Printable Flashcards PDF")
-if st.button("🖨️ Generate PDF for Unknown Terms"):
-    # Filter out known terms
-    unknown_terms = [e for e in filtered_terms if e["term"] not in known_terms]
-    if not unknown_terms:
-        st.info("🎉 You have no unknown terms under these filters!")
-    else:
-        pdf = FPDF(orientation="P", unit="mm", format="A4")
-        pdf.set_auto_page_break(auto=True, margin=15)
-
-        # Use a basic Latin-1 font (like "Arial") but sanitize text
-        pdf.set_font("Arial", size=16)
-
-        for entry in unknown_terms:
-            # 1) Normalize to NFKD, then remove anything not encodable in Latin-1
-            raw_term = entry["term"]
-            normalized = unicodedata.normalize("NFKD", raw_term)
-            sanitized = normalized.encode("latin-1", "ignore").decode("latin-1")
-
-            pdf.add_page()
-            pdf.cell(0, 10, txt=sanitized, ln=True)
-
-            # 2) Leave blank space for the definition (approx. 8 lines)
-            pdf.set_font("Arial", size=12)
-            for _ in range(8):
-                pdf.ln(10)
-            pdf.set_font("Arial", size=16)
-
-        # 3) Save to a temporary path and offer download
-        pdf.output(PDF_PATH)
-        with open(PDF_PATH, "rb") as f:
-            pdf_bytes = f.read()
-        st.success(f"PDF generated with {len(unknown_terms)} pages.")
-        st.download_button(
-            label="⬇️ Download Flashcards PDF",
-            data=pdf_bytes,
-            file_name="flashcards_unknown.pdf",
-            mime="application/pdf",
-        )
 st.markdown("---")
 
 # === Initialize Quick Quiz Session State ===
