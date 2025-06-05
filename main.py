@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # main.py
 import time  # New import for sleep
 import json
